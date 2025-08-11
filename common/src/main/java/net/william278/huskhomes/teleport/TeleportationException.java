@@ -81,6 +81,7 @@ public class TeleportationException extends IllegalStateException {
         ALREADY_WARMING_UP,
         TRANSACTION_FAILED,
         WARMUP_ALREADY_MOVING,
+        TARGET_IGNORING_REQUESTS,
         WORLD_NOT_FOUND,
         ILLEGAL_TARGET_COORDINATES,
         CANNOT_TELEPORT_TO_SELF,

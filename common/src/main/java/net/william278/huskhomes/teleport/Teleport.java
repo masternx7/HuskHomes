@@ -33,6 +33,7 @@ import net.william278.huskhomes.position.Position;
 import net.william278.huskhomes.user.OnlineUser;
 import net.william278.huskhomes.util.TransactionResolver;
 import org.jetbrains.annotations.NotNull;
+import net.william278.huskhomes.user.SavedUser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -95,6 +96,16 @@ public class Teleport implements Completable {
             final Optional<OnlineUser> localTarget = username.name().equals("@s")
                     ? Optional.of(executor) : username.findLocally(plugin);
             if (localTarget.isPresent()) {
+                // เช็ค ignore ก่อน teleport
+                if (!username.name().equals("@s") && localTarget.get() != executor) {
+                    boolean isIgnoring = plugin.getSavedUser(localTarget.get()).map(user -> user.isIgnoringTeleports()).orElse(false);
+                    boolean hasBypass = executor.hasPermission("huskhomes.bypass.tpignore");
+                    
+                    if (isIgnoring && !hasBypass) {
+                        throw new TeleportationException(TeleportationException.Type.TARGET_NOT_FOUND, plugin);
+                    }
+                }
+                
                 fireEvent((event) -> {
                     performTransactions();
                     if (updateLastPosition && canReturnToWorld(teleporter)) {
@@ -108,12 +119,20 @@ public class Teleport implements Completable {
             }
 
             if (plugin.getSettings().getCrossServer().isEnabled()) {
-                fireEvent((event) -> {
-                    performTransactions();
-                    plugin.getBroker().ifPresent(b -> Message.builder()
+                // เช็ค ignore สำหรับ cross-server target
+                plugin.getBroker().ifPresent(b -> {
+                    // ส่ง message ไปเช็ค ignore status ที่เซิร์ฟเวอร์ปลายทาง
+                    Message.builder()
                             .type(Message.MessageType.TELEPORT_TO_NETWORKED_POSITION)
                             .target(username.name(), Message.TargetType.PLAYER)
-                            .build().send(b, executor));
+                            .payload(Payload.string(executor.getName())) // ส่งชื่อ executor ไปด้วย
+                            .build().send(b, executor);
+                    
+                    // ห้าม teleport ทันที ให้รอ response กลับมาก่อน
+                    // plugin.getBroker().ifPresent(b -> Message.builder()
+                    //         .type(Message.MessageType.TELEPORT_TO_NETWORKED_POSITION)
+                    //         .target(username.name(), Message.TargetType.PLAYER)
+                    //         .build().send(b, executor));
                 });
                 return;
             }

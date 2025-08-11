@@ -68,6 +68,27 @@ public interface MessageHandler {
     }
 
     default void handleTeleportToNetworkedPosition(@NotNull Message message, @NotNull OnlineUser receiver) {
+        boolean isIgnoring = getPlugin().getManager().requests().isIgnoringRequests(receiver);
+        String senderName = message.getSender();
+
+        // หา OnlineUser sender จาก user list
+        Optional<OnlineUser> senderOpt = getPlugin().getOnlineUsers().stream()
+            .filter(user -> user.getName().equalsIgnoreCase(senderName))
+            .findFirst();
+
+        boolean hasBypass = senderOpt
+            .map(user -> user.hasPermission("huskhomes.bypass.tpignore"))
+            .orElse(false);
+
+        if (isIgnoring && !hasBypass) {
+            senderOpt.ifPresent(sender -> {
+                getPlugin().getLocales().getLocale("error_ignoring_teleport_requests")
+                    .ifPresent(sender::sendMessage);
+            });
+            return;
+        }
+
+        // ส่งตำแหน่งกลับไปให้ sender ตามปกติ
         Message.builder()
                 .type(Message.MessageType.TELEPORT_TO_POSITION)
                 .target(message.getSender(), Message.TargetType.PLAYER)

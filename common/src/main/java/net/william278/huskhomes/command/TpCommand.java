@@ -28,6 +28,7 @@ import net.william278.huskhomes.user.OnlineUser;
 import net.william278.huskhomes.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.william278.huskhomes.user.SavedUser;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class TpCommand extends Command implements TabCompletable {
 
     // Execute a teleport
     private void execute(@NotNull CommandUser executor, @NotNull Teleportable teleporter, @NotNull Target target,
-                         @NotNull String[] args) {
+                        @NotNull String[] args) {
         // Build and execute the teleport
         final TeleportBuilder builder = Teleport.builder(plugin)
                 .teleporter(teleporter)
@@ -109,6 +110,32 @@ public class TpCommand extends Command implements TabCompletable {
                 return;
             }
             builder.executor(online);
+        }
+
+        if (target instanceof OnlineUser onlineTarget) {
+            boolean isIgnoring = plugin.getSavedUser(onlineTarget).map(SavedUser::isIgnoringTeleports).orElse(false);
+            boolean hasBypass = executor.hasPermission("huskhomes.bypass.tpignore");
+            
+            if (isIgnoring && !hasBypass) {
+                plugin.getLocales().getLocale("error_ignoring_teleport_requests")
+                        .ifPresent(executor::sendMessage);
+                return;
+            }
+        }
+        
+        if (target instanceof Username username && !username.name().equals("@s")) {
+            Optional<OnlineUser> onlineTarget = username.findLocally(plugin);
+            if (onlineTarget.isPresent()) {
+                boolean isIgnoring = plugin.getSavedUser(onlineTarget.get()).map(SavedUser::isIgnoringTeleports).orElse(false);
+                boolean hasBypass = executor.hasPermission("huskhomes.bypass.tpignore");
+                
+                
+                if (isIgnoring && !hasBypass) {
+                    plugin.getLocales().getLocale("error_ignoring_teleport_requests")
+                            .ifPresent(executor::sendMessage);
+                    return;
+                }
+            }
         }
 
         // Execute teleport
