@@ -63,6 +63,38 @@ public class RequestsManager {
     }
 
     /**
+     * Return if a user is accepting teleports from other players.
+     *
+     * @param user the user to check
+     * @return {@code true} if the user is accepting teleports, or if they could not be found
+     */
+    public boolean isAcceptingTeleports(@NotNull User user) {
+        return plugin.getSavedUser(user).map(SavedUser::isAcceptingTeleports)
+                .or(() -> plugin.getDatabase().getUser(user.getUuid()).map(SavedUser::isAcceptingTeleports))
+                .orElse(true);
+    }
+
+    /**
+     * Return if the user with the given username is accepting teleports from other players.
+     *
+     * <p>Resolves local online users (including partial usernames, mirroring the lookup behaviour
+     * of teleport commands), then networked online users, before falling back to the database.
+     *
+     * @param username the username to check
+     * @return {@code true} if the user is accepting teleports, or if they could not be found
+     */
+    public boolean isAcceptingTeleports(@NotNull String username) {
+        final Optional<User> resolved = plugin.getOnlineUser(username)
+                .map(user -> (User) user)
+                .or(() -> plugin.getUserList().stream()
+                        .filter(user -> user.getName().equalsIgnoreCase(username))
+                        .findFirst());
+        return resolved.map(this::isAcceptingTeleports)
+                .or(() -> plugin.getDatabase().getUser(username).map(SavedUser::isAcceptingTeleports))
+                .orElse(true);
+    }
+
+    /**
      * Add a teleport request to a user's request queue.
      *
      * @param request   the {@link TeleportRequest} to add

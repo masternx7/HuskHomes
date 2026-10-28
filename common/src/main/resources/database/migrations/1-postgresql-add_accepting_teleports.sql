@@ -1,0 +1,1 @@
+ALTER TABLE "%player_data%" ADD COLUMN "accepting_teleports" boolean NOT NULL DEFAULT TRUE;

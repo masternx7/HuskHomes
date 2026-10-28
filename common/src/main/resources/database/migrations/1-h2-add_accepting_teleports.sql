@@ -1,0 +1,1 @@
+ALTER TABLE `%player_data%` ADD COLUMN `accepting_teleports` BOOLEAN NOT NULL DEFAULT TRUE;

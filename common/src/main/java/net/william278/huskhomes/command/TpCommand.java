@@ -119,6 +119,14 @@ public class TpCommand extends Command implements TabCompletable {
             builder.executor(online);
         }
 
+        // Check the target is accepting teleports from other players
+        if (targetName != null && !TpToggleCommand.canBypass(executor)
+                && !plugin.getManager().requests().isAcceptingTeleports(targetName)) {
+            plugin.getLocales().getLocale("error_player_not_accepting_teleports", targetName)
+                    .ifPresent(executor::sendMessage);
+            return;
+        }
+
         // Execute teleport
         if (!builder.buildAndComplete(false, args)) {
             return;

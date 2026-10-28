@@ -107,6 +107,7 @@ public interface CommandProvider {
         commands.add(new TpaAllCommand(getPlugin()));
         commands.add(new RtpCommand(getPlugin()));
         commands.add(new TpIgnoreCommand(getPlugin()));
+        commands.add(new TpToggleCommand(getPlugin()));
         commands.add(new TpOfflineCommand(getPlugin()));
         commands.add(new TpAllCommand(getPlugin()));
         commands.add(new SpawnCommand(getPlugin()));

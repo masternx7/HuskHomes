@@ -94,6 +94,13 @@ public abstract class EventListener {
                             .getRawLocale("tpignore_toggle_button")
                             .orElse("")).ifPresent(locale -> onlineUser.sendMessage(plugin.getLocales().format(locale)));
                 }
+
+                // Send a reminder message if they are still not accepting teleports
+                if (!userData.isAcceptingTeleports()) {
+                    plugin.getLocales().getRawLocale("tptoggle_on_notification", plugin.getLocales()
+                            .getRawLocale("tptoggle_toggle_button")
+                            .orElse("")).ifPresent(locale -> onlineUser.sendMessage(plugin.getLocales().format(locale)));
+                }
             });
         });
     }

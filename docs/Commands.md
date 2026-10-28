@@ -319,6 +319,13 @@ This is a table of HuskHomes commands, how to use them, and their required permi
             <td><code>huskhomes.command.tpignore</code></td>
             <td align="center">✅</td>
         </tr>
+        <!-- /tptoggle command -->
+        <tr>
+            <td colspan="2"><code>/tptoggle</code></td>
+            <td>Toggle whether other players can teleport to you (<code>/tp</code> and <code>/tpa</code>)</td>
+            <td><code>huskhomes.command.tptoggle</code></td>
+            <td align="center">✅</td>
+        </tr>
         <!-- /rtp command -->
         <tr><th colspan="5">Random teleport command</th></tr>
         <tr>

@@ -67,6 +67,14 @@ public class TpRequestCommand extends InGameCommand implements UserListTabComple
             return;
         }
 
+        // Check the target is accepting teleports from other players
+        if (requestType == TeleportRequest.Type.TPA && !TpToggleCommand.canBypass(onlineUser)
+                && !manager.isAcceptingTeleports(target)) {
+            plugin.getLocales().getLocale("error_player_not_accepting_teleports", target)
+                    .ifPresent(onlineUser::sendMessage);
+            return;
+        }
+
         // Validate economy check
         if (!plugin.validateTransaction(onlineUser, TransactionResolver.Action.SEND_TELEPORT_REQUEST)) {
             return;

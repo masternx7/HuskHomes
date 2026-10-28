@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `%player_data%`
     `respawn_position`  INT         NULL,
     `home_slots`        INT         NOT NULL DEFAULT 0,
     `ignoring_requests` BOOLEAN     NOT NULL DEFAULT FALSE,
+    `accepting_teleports` BOOLEAN   NOT NULL DEFAULT TRUE,
 
     FOREIGN KEY (`last_position`) REFERENCES `%position_data%` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION,
     FOREIGN KEY (`offline_position`) REFERENCES `%position_data%` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION,

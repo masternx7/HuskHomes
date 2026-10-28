@@ -626,6 +626,10 @@ public abstract class Database {
         ADD_METADATA_TABLE(
                 0, "add_metadata_table",
                 Type.MYSQL, Type.MARIADB, Type.POSTGRESQL, Type.SQLITE, Type.H2
+        ),
+        ADD_ACCEPTING_TELEPORTS_COLUMN(
+                1, "add_accepting_teleports",
+                Type.MYSQL, Type.MARIADB, Type.POSTGRESQL, Type.SQLITE, Type.H2
         );
 
         private final int version;

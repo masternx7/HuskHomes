@@ -41,6 +41,8 @@ public class SavedUser {
     private int homeSlots;
     @Setter
     private boolean ignoringTeleports;
+    @Setter
+    private boolean acceptingTeleports;
 
     /**
      * Create a new SavedUser object.
@@ -48,12 +50,12 @@ public class SavedUser {
      * <p>Please note that User RTP cooldowns are no longer stored in {@link SavedUser} objects;
      * please use the new API methods for getting/setting cooldowns
      *
-     * @deprecated See {@code #SavedUser(User, int, boolean)} to create a SavedUser object.
+     * @deprecated See {@code #SavedUser(User, int, boolean, boolean)} to create a SavedUser object.
      */
     @Deprecated(since = "4.4", forRemoval = true)
     @SuppressWarnings("unused")
     public SavedUser(@NotNull User user, int homeSlots, boolean ignoringTeleports, @NotNull Instant rtpCooldown) {
-        this(user, homeSlots, ignoringTeleports);
+        this(user, homeSlots, ignoringTeleports, true);
     }
 
     @NotNull

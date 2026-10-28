@@ -38,6 +38,7 @@ disabled-commands:
   - tpno
   - rtp
   - tpignore
+  - tptoggle
   - tpoffline
   - tpall
   - tpaall
@@ -115,6 +116,8 @@ aliases:
     - "huskhomes:rtp $1-"
   tpignore:
     - "huskhomes:tpignore $1-"
+  tptoggle:
+    - "huskhomes:tptoggle $1-"
   tpoffline:
     - "huskhomes:tpoffline $1-"
   tpall:

@@ -360,7 +360,7 @@ public class PostgreSqlDatabase extends Database {
     public Optional<SavedUser> getUser(@NotNull String name) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    SELECT "uuid", "username", "home_slots", "ignoring_requests"
+                    SELECT "uuid", "username", "home_slots", "ignoring_requests", "accepting_teleports"
                     FROM "%player_data%"
                     WHERE "username"=?"""))) {
                 statement.setString(1, name);
@@ -371,7 +371,8 @@ public class PostgreSqlDatabase extends Database {
                             User.of(UUID.fromString(resultSet.getString("uuid")),
                                     resultSet.getString("username")),
                             resultSet.getInt("home_slots"),
-                            resultSet.getBoolean("ignoring_requests")
+                            resultSet.getBoolean("ignoring_requests"),
+                            resultSet.getBoolean("accepting_teleports")
                     ));
                 }
             }
@@ -385,7 +386,7 @@ public class PostgreSqlDatabase extends Database {
     public Optional<SavedUser> getUser(@NotNull UUID uuid) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
-                    SELECT "uuid", "username", "home_slots", "ignoring_requests"
+                    SELECT "uuid", "username", "home_slots", "ignoring_requests", "accepting_teleports"
                     FROM "%player_data%"
                     WHERE "uuid"=?"""))) {
 
@@ -397,7 +398,8 @@ public class PostgreSqlDatabase extends Database {
                             User.of(UUID.fromString(resultSet.getString("uuid")),
                                     resultSet.getString("username")),
                             resultSet.getInt("home_slots"),
-                            resultSet.getBoolean("ignoring_requests")
+                            resultSet.getBoolean("ignoring_requests"),
+                            resultSet.getBoolean("accepting_teleports")
                     ));
                 }
             }
@@ -873,12 +875,13 @@ public class PostgreSqlDatabase extends Database {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(format("""
                     UPDATE "%player_data%"
-                    SET "home_slots"=?, "ignoring_requests"=?
+                    SET "home_slots"=?, "ignoring_requests"=?, "accepting_teleports"=?
                     WHERE "uuid"=?"""))) {
 
                 statement.setInt(1, savedUser.getHomeSlots());
                 statement.setBoolean(2, savedUser.isIgnoringTeleports());
-                statement.setString(3, savedUser.getUserUuid().toString());
+                statement.setBoolean(3, savedUser.isAcceptingTeleports());
+                statement.setString(4, savedUser.getUserUuid().toString());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
